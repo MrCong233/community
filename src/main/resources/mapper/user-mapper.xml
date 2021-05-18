@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace设置mapper的权限，即为哪个Mapper接口服务的-->
+<mapper namespace="com.nowcoder.community.dao.UserMapper">
+
+    <!--sql 相当于定义xml文件内的字段常量，可以在sql语句中复用-->
+    <sql id="selectFields">
+        id, username, password, salt,email,type,status,activation_code,header_url,create_time
+    </sql>
+    <sql id="insertFields">
+        username, password, salt,email,type,status,activation_code,header_url,create_time
+    </sql>
+
+    <!--id 要写标签对应的方法名,表示这段sql是为该方法服务端-->
+    <!--resultType表示方法返回的数据类型-->
+    <!--#{param}表示引用方法的参数-->
+    <select id="selectById" resultType="User">
+        select  <include refid="selectFields"/>
+        from user
+        where id = #{id}
+    </select>
+    <select id="selectByName" resultType="User">
+        select  <include refid="selectFields"/>
+        from user
+        where username = #{username}
+    </select>
+    <select id="selectByEmail" resultType="User">
+        select  <include refid="selectFields"/>
+        from user
+        where email = #{email}
+    </select>
+<!--    id同样对应接口中的insert方法名称-->
+<!--    parameterType表示方法输入参数的数据类型，其中非基本数据类型需要声明-->
+<!--    keyProperty表示数据表主键对应的实体类中的属性名，因为在实际插入操作中，主键是从MySQL生成的，回填到实体类对应的属性中-->
+<!--    values 的变量为User中的属性-->
+    <insert id="insertUser" parameterType="User" keyProperty="id">
+        insert into user (<include refid="insertFields"/>)
+        values (#{username},#{password},#{salt},#{email},#{type},#{status},#{activationCode},#{headerUrl},#{createTime})
+    </insert>
+    
+    <update id="updateStatus">
+        update user set status = #{status} where id = #{id}
+    </update>
+
+    <update id="updateHeader">
+        update user set header_url = #{headerUrl} where id = #{id}
+    </update>
+
+    <update id="updatePassword">
+        update user set password = #{password} where id = #{id}
+    </update>
+
+</mapper>
